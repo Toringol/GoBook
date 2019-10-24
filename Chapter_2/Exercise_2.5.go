@@ -45,7 +45,7 @@ func main() {
 	// 94.5422ms -------- Variant with init
 	// 54.3685ms -------- Variant with drop right bit x & (x - 1)
 	for i := 0; i < 100; i++ {
-		fmt.Println(PopCount(13))
+		fmt.Println(PopCount(378923689236823867))
 	}
 	t := time.Now()
 	elapsed := t.Sub(start)
