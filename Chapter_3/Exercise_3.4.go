@@ -1,3 +1,12 @@
+/*
+* Следуюя подходу, использованному в примере с фигурами Лиссажу
+* из раздела 1.7, создайте веб-сервер, который вычисляет поверхности и возвращает
+* клиенту SVG-данные. Сервер должен использовать в ответе заголовок ContentType наподобие
+* следующего:
+* w.Header().Set("Content-Type", "image/svg+xml")
+* Позвольте клиенту указывать разные параменты, такие как высота, ширина и цвет, в запросе HTTP.
+ */
+
 package main
 
 import (
@@ -6,6 +15,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 )
@@ -24,8 +34,20 @@ var sin30, cos30 = math.Sin(angle), math.Cos(angle)
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "web" {
 		handler := func(w http.ResponseWriter, r *http.Request) {
+			params, _ := url.ParseQuery(r.URL.RawQuery)
+			var newWidth, newHeight int = 0, 0
+			if len(params["width"]) > 0 {
+				newWidth, _ = strconv.Atoi(params["width"][0])
+			}
+			if len(params["height"]) > 0 {
+				newHeight, _ = strconv.Atoi(params["height"][0])
+			}
 			w.Header().Set("Content-Type", "image/svg+xml")
-			render(w, width, height, cells)
+			if newWidth != 0 && newHeight != 0 {
+				render(w, newWidth, newHeight, cells)
+			} else {
+				render(w, width, height, cells)
+			}
 		}
 		http.HandleFunc("/", handler)
 
@@ -37,10 +59,10 @@ func corner(i, j int) (float64, float64, bool) {
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
 
-	z := f(x, y)
+	// z := f(x, y)
 	// z := eggBox(x, y)
-	// z := saddle(x, y)
-	
+	z := saddle(x, y)
+
 	sx := width/2 + (x-y)*cos30*xyscale
 	sy := height/2 + (x+y)*sin30*xyscale - z*zscale
 	return sx, sy, math.IsInf(sx, 0) || math.IsInf(sy, 0) || math.IsNaN(sx) || math.IsNaN(sy)
