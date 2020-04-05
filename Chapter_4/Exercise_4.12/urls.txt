@@ -1,0 +1,3 @@
+https://xkcd.com/570/info.0.json
+https://xkcd.com/571/info.0.json
+https://xkcd.com/572/info.0.json
