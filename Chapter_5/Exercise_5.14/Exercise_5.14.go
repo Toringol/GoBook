@@ -52,8 +52,10 @@ func deps(course string) []string {
 
 func main() {
 	var course string
+	
 	for course = range prereqs {
 		break
 	}
+
 	breadthFirst(deps, []string{course})
 }
